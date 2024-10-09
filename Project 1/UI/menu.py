@@ -1,41 +1,64 @@
 import pandas as pd
-
+import re
+import mysql.connector
 
 class Menu():
-    def __init__(self, menu=[[],[],[],[],[]], menu_max=0) -> None:
+    def __init__(self, menu=["-------------------------------------------",[],[],[],"-------------------------------------------"],
+                answers = ['Bragge\'s','Colosseum','Inventory','Weapons','Skills','Leave']) -> None:
         self.menu = menu
-        self.menu_max = menu_max
+        self.answers = answers
 
-    def DrawMenu():
+    def __DrawMenu__():
         #just iterate through the menu listlist
         #and print to console
         pass
 
-    def SwitchMenu(self,scene) -> None:
+    def SwitchMenu(self,scene):
         #read the prompts file
-        prompts_all = pd.read_csv('GameData/textprompts.csv')
+        cnx = mysql.connector.connect(user='root',password='tSn3U-vDA>4^!),E',host='localhost',database='colosseum')
+        cursor = cnx.cursor()
+        cursor.execute("USE colosseum")
+
         if scene == "main":
-            prompts_main_data = prompts_all.loc[0]
+            cursor.execute("SELECT Prompt FROM Prompts WHERE Scene = 'Main'")
             # filter the prompts for the main menu ones
-            prompts_main = [str(prompts_main_data["Prompt"])]
+            prompts_main = cursor.fetchall()
             self.SetMainMenu(prompts_main) # pass in the prompts
-            #copy this for the others too
+            # copy this for the others too
         elif scene == "fight":
+
             self.SetFightMenu()
         elif scene == "shop":
+
             self.SetShopMenu()
+        elif scene == "inventory":
+
+            self.SetInventoryMenu()
         else:
+            print('HOW has something gone this wrong')
             pass
+
+        self.__DrawMenu__()
 
     def SetMainMenu(self,prompts):
         #pick one of the prompts
-        prompt_main = prompts[0]
-        
-        #seperate the string based on the max length of the menu
-        pass
+        prompt_main = self.CleanUpPrompt(prompts[0])
+        self.menu[1] = prompt_main
+        print(prompt_main)
 
     def SetFightMenu():
         pass
 
     def SetShopMenu():
         pass
+
+    def SetInventoryMenu():
+        pass
+
+
+    def CleanUpPrompt(self, prompt):
+        # cleaned = re.sub("[\\]", '', str(prompt))
+        # cleaned2 = cleaned[2:-3]
+        cleaned2 = str(prompt)[2:-3]
+        return cleaned2
+        #pass

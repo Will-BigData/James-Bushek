@@ -9,8 +9,11 @@ class Player:
         self.health_max = health_max
         self.current_health = current_health
     
-    def improve_health(self):
+    def ImproveHealth(self):
         self.health_max += 3
+
+    def Heal(self):
+        self.current_health = self.health_max/1
 
     # TODO: getters and setters
     def __getattribute__(self, name: str) -> Any:
