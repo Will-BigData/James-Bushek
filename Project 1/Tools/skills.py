@@ -9,9 +9,7 @@ class Skill():
         self.equipable = equipable
         self.multiplier = multiplier
         self.cooldown = cooldown
+        self.SetSkill(skill_name)
 
-    def __getattribute__(self, name: str) -> Any:
-        pass
-
-    def __setattr__(self, name: str, value: Any) -> None:
+    def SetSkill(self, skill):
         pass
