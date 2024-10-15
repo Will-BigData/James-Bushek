@@ -6,14 +6,6 @@ from Tools.skills import Skill
 from WorldElements.shop import Shop
 
 
-# mnT = Menu()
-# mnT.SwitchMenu("Main",["Shop","Colosseum","Inventory","Exit Game"])
-# mnT.DrawMenu()
-
-# TODO
-# DO NOT FORGET
-# print(pl.__getattribute__("weapon"))
-
 def startGame():
     mn = Menu()
     player_weapon = Weapon("sword")
