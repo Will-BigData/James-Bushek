@@ -11,10 +11,10 @@ def startGame():
     player_weapon = Weapon("sword")
     pl_blank_weapon = Weapon("none")
     player_skills = [Skill("basic attack"), Skill("guard")]
-    player = Player(player_weapon, pl_blank_weapon,player_skills, 10, 10, ["sword"])
+    player = Player(Weapon("sword"), pl_blank_weapon,player_skills, 10, 10, ["sword"])
     
     enemy_weapon = Weapon("sword")
-    current_enemy = Player(enemy_weapon, pl_blank_weapon,[Skill("basic attack")], 4,4,[])
+    current_enemy = Player(Weapon("sword"), pl_blank_weapon,[Skill("basic attack")], 4,4,[])
     
     shop = Shop(player_skills)
     shop_points = 0
@@ -176,9 +176,9 @@ def startGame():
 
                     for equipable in skill_equipable:
                         if player.__getattribute__("weapon").__getattribute__("weapon_name").__contains__(equipable):
-                            player_active_skills.append([skill,"",0])
+                            player_active_skills.append([skill,"no",0])
                         elif equipable == "all":
-                            player_active_skills.append([skill,"",0])
+                            player_active_skills.append([skill,"no",0])
                 
                 if player.__getattribute__("aux_weapon").__getattribute__("weapon_name") != "none":
                     for skill in player.__getattribute__("skills"):
@@ -199,9 +199,9 @@ def startGame():
 
                     for equipable in skill_equipable:
                         if current_enemy.__getattribute__("weapon").__getattribute__("weapon_name").__contains__(equipable):
-                            enemy_active_skills.append([skill,"",0])
+                            enemy_active_skills.append([skill,"no",0])
                         elif equipable == "all":
-                            enemy_active_skills.append([skill,"",0])
+                            enemy_active_skills.append([skill,"no",0])
                 
                 if current_enemy.__getattribute__("aux_weapon").__getattribute__("weapon_name") != "none":
                     for skill in current_enemy.__getattribute__("skills"):
@@ -264,7 +264,7 @@ def startGame():
                             # setting cooldown here for the used skill
                             player_active_skills[u_input][2] += player_active_skills[u_input][0].__getattribute__("cooldown")
 
-                            if player_attack[1] != "aux":
+                            if player_attack[1] == "no":
                                 player_damage = player.__getattribute__("weapon").__getattribute__("base_damage") * player_attack[0].__getattribute__("multiplier")
                             else:
                                 player_damage = player.__getattribute__("aux_weapon").__getattribute__("base_damage") * player_attack[0].__getattribute__("multiplier")
@@ -278,10 +278,10 @@ def startGame():
 
                             if enemy_health > 0:
 
-                                if enemy_next_attack[1] != "aux":
-                                    enemy_damage = player.__getattribute__("weapon").__getattribute__("base_damage") * enemy_next_attack[0].__getattribute__("multiplier")
+                                if enemy_next_attack[1] == "no":
+                                    enemy_damage = current_enemy.__getattribute__("weapon").__getattribute__("base_damage") * enemy_next_attack[0].__getattribute__("multiplier")
                                 else:
-                                    enemy_damage = player.__getattribute__("aux_weapon").__getattribute__("base_damage") * enemy_next_attack[0].__getattribute__("multiplier")
+                                    enemy_damage = current_enemy.__getattribute__("aux_weapon").__getattribute__("base_damage") * enemy_next_attack[0].__getattribute__("multiplier")
 
                                 if player_attack[0].__getattribute__("skill_name") == "guard" or player_attack[0].__getattribute__("skill_name") == "block":
                                     enemy_damage = 0
@@ -363,7 +363,13 @@ def startGame():
                                     if temp_menu.__len__() > u_input and u_input >= 0:
                                         
                                         if temp_menu[u_input] == "Equip Main":
-                                            player.__setattr__("weapon", player_weapon)
+                                            player.ChangeWeapon(player_weapon.__getattribute__("weapon_name"))
+
+                                            if str(player.__getattribute__("weapon").__getattribute__("weapon_name")).__contains__("great") == True:
+
+                                                print(f"You unequipped your offhand {player.__getattribute__("aux_weapon").__getattribute__("weapon_name")}")
+
+                                                player.ChangeAuxWeapon("none")
                                             
                                             weapon_menu = 0
                                             
@@ -371,8 +377,8 @@ def startGame():
 
                                         elif temp_menu[u_input] == "Equip Off-hand":
                                             if player_weapon.__getattribute__("auxillary"):
-                                                if str(player.__getattribute__("weapon_name")).__contains__("great") != True:
-                                                    player.__setattr__("aux_weapon", player_weapon)
+                                                if str(player.__getattribute__("weapon").__getattribute__("weapon_name")).__contains__("great") != True:
+                                                    player.ChangeAuxWeapon(player_weapon.__getattribute__("weapon_name"))
 
                                                     weapon_menu = 0
 

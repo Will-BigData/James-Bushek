@@ -19,6 +19,14 @@ class Player:
     def Heal(self):
         self.current_health = 1+self.health_max-1
 
+    def ChangeWeapon(self, name):
+        new_weapon = Weapon(name)
+        self.weapon = new_weapon
+
+    def ChangeAuxWeapon(self, name):
+        new_aux_weapon = Weapon(name)
+        self.aux_weapon = new_aux_weapon
+
     def RandomAttack(self, skills):
         num_skills = skills.__len__()
         skill_rand = 0
