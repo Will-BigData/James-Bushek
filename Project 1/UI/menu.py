@@ -21,7 +21,7 @@ class Menu():
                 print(item)
         pass
 
-    def SwitchMenu(self, scene, menu_index, options):
+    def SwitchMenu(self, scene, menu_index, options, extra="", extra2=""):
         #read the prompts file
         cnx = mysql.connector.connect(user='root',password='tSn3U-vDA>4^!),E',host='localhost',database='colosseum')
         cursor = cnx.cursor()
@@ -36,23 +36,22 @@ class Menu():
             self.SetMainMenu(prompts_main, options) # pass in the prompts
             # copy this for the others too
 
-        elif scene == "Fight":
+        elif scene == "Colosseum":
             cursor.execute("SELECT Prompt FROM Prompts WHERE Scene = 'Fight'")
 
             prompts_fight = cursor.fetchall()
 
-            self.SetFightMenu()
+            self.SetFightMenu(menu_index, options, extra, extra2)
 
         elif scene == "Shop":
-            cursor.execute("SELECT Prompt FROM Prompts WHERE Scene = 'Fight'")
+            cursor.execute("SELECT Prompt FROM Prompts WHERE Scene = 'Shop'")
 
             prompts_shop = cursor.fetchall()
 
-            self.SetShopMenu()
+            self.SetShopMenu(menu_index, options, extra)
 
         elif scene == "Inventory":
-
-            self.SetInventoryMenu(menu_index, options)
+            self.SetInventoryMenu(menu_index, options, extra)
 
         else:
             print('HOW has something gone this wrong')
@@ -66,27 +65,61 @@ class Menu():
         #pick one of the prompts
         prompt_main = self.__CleanUpPrompt__(prompts[0])
 
+        self.menu[2] = []
         self.menu[2].append(prompt_main)
 
         self.menu[4] = self.__FormatOptions__(options)
 
-    def SetFightMenu():
-        pass
+    def SetFightMenu(self, enemy_next_attack, options, current_enemy, player):
+        self.menu[2] = []
 
-    def SetShopMenu():
-        pass
-
-    def SetInventoryMenu(self, menu_index, options):
         self.menu[4] = self.__FormatOptions__(options)
-        pass
 
-    def SkillMenuSwitch(self, skill:Skill):
-        skill_name = str(skill.__getattribute__("skill_name")).title() + ":"
-        equipable = skill.__getattribute__("equipable")
-        multiplier = skill.__getattribute__("multiplier")
-        cooldown = skill.__getattribute__("cooldown")
-        self.menu[2] = [skill_name,f"Usable On: {equipable}",f"Damage Mulitplier: {multiplier}",f"Cooldown: {cooldown}"]
+        health1 = current_enemy.__getattribute__("current_health")
+        health2 = player.__getattribute__("current_health")
 
+        self.menu[2].append(f"Your opponent wields a {current_enemy.__getattribute__("weapon").__getattribute__("weapon_name").title()}")
+        self.menu[2].append(f"They're preparing to use {enemy_next_attack}")
+        self.menu[2].append(f"Enemy HP: {str(health1)}")
+        self.menu[2].append("")
+        self.menu[2].append(f"Your HP: {str(health2)}")
+
+    def SetShopMenu(self, menu_index, options, current_item):
+        self.menu[2] = []
+        self.menu[4] = self.__FormatOptions__(options)
+
+        if menu_index == 1:
+            self.__SetWeapon__(current_item)
+        elif menu_index == 2:
+            self.__SetSkill__(current_item)
+
+    def SetInventoryMenu(self, menu_index, options, player_item):
+        self.menu[2] = []
+        self.menu[4] = self.__FormatOptions__(options)
+
+        if menu_index == 1:
+            self.__SetWeapon__(player_item)
+        elif menu_index == 2:
+            self.__SetSkill__(player_item)
+
+    def __SetWeapon__(self, player_item):
+        if type(player_item) == Weapon:
+                weapon_name = str(player_item.__getattribute__("weapon_name")).title() + ":"
+                base_damage = player_item.__getattribute__("base_damage")
+                auxillary = player_item.__getattribute__("auxillary")
+                self.menu[2] = [weapon_name, f"Base Damage: {base_damage}", f"Offhand Weapon: {auxillary}"]
+            # else:
+            #     print("it didn't work :(")
+
+    def __SetSkill__(self, player_item):
+        if type(player_item) == Skill:
+                skill_name = str(player_item.__getattribute__("skill_name")).title() + ":"
+                equipable = player_item.__getattribute__("equipable")
+                multiplier = player_item.__getattribute__("multiplier")
+                cooldown = player_item.__getattribute__("cooldown") - 1
+                self.menu[2] = [skill_name,f"Usable With: {equipable}",f"Damage Mulitplier: {multiplier}",f"Cooldown: {cooldown} Turns"]
+            # else:
+            #     print("it didn't work :(")
 
 
     def __CleanUpPrompt__(self, prompt):
